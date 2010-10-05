@@ -40,9 +40,9 @@ def ununicode(mp3path, opts):
             new = map(lambda x: x.encode('ASCII', 'ignore'), mp3[key])
 
             # extra fixup stuff
-            if opts.trimwhite:
+            if opts.trimwhite or opts.all:
                 new = map(lambda x: x.strip(), new)
-            if opts.nonprint:
+            if opts.nonprint or opts.all:
                 new = map(lambda s: filter(lambda c: c in printable, s), new)
 
             # back to unicode for comparison
@@ -53,7 +53,7 @@ def ununicode(mp3path, opts):
                 print('"%s"\t->\t"%s"' % (mp3[key], new))
 
             mp3[key] = new
-        
+
         if not opts.dryrun:
             mp3.save()
     except ID3NoHeaderError as noh:
@@ -63,6 +63,8 @@ def main():
     """main function for standalone usage"""
     usage = "usage: %prog [options] file.mp3|mp3dir"
     parser = OptionParser(usage=usage)
+    parser.add_option("-a", "--all", dest="all", default=False,
+            action="store_true", help="Perform all alterations.")
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
             action="store_true", help="Show what would be done, without making any changes.")
     parser.add_option("-w", "--trim-whitespace", dest="trimwhite", default=False,
