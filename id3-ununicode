@@ -35,6 +35,11 @@ def ununicode(mp3path, opts):
     mp3 = id3(mp3path)
     for key in mp3.keys():
         new = map(lambda x: x.encode('ASCII', 'ignore'), mp3[key])
+
+        # extra fixup stuff
+        if opts.trimwhite:
+            new = map(lambda x: x.strip(), new)
+
         print('"%s"\t->\t"%s"' % (mp3[key], new))
 
         mp3[key] = new
@@ -49,6 +54,8 @@ def main():
     parser = OptionParser(usage=usage)
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
             action="store_true", help="Show what would be done, without making any changes.")
+    parser.add_option("-w", "--trim-whitespace", dest="trimwhite", default=False,
+            action="store_true", help="Also trim leading/trailing whitespace.")
 
     (options, args) = parser.parse_args()
 
