@@ -31,30 +31,33 @@ from string import printable
 from optparse import OptionParser
 
 from mutagen.easyid3 import EasyID3 as id3
+from mutagen.id3 import ID3NoHeaderError
 
 def ununicode(mp3path, opts):
-    mp3 = id3(mp3path)
-    for key in mp3.keys():
-        new = map(lambda x: x.encode('ASCII', 'ignore'), mp3[key])
+    try:
+        mp3 = id3(mp3path)
+        for key in mp3.keys():
+            new = map(lambda x: x.encode('ASCII', 'ignore'), mp3[key])
 
-        # extra fixup stuff
-        if opts.trimwhite:
-            new = map(lambda x: x.strip(), new)
-        if opts.nonprint:
-            new = map(lambda s: filter(lambda c: c in printable, s), new)
+            # extra fixup stuff
+            if opts.trimwhite:
+                new = map(lambda x: x.strip(), new)
+            if opts.nonprint:
+                new = map(lambda s: filter(lambda c: c in printable, s), new)
 
-        # back to unicode for comparison
-        map(unicode, new)
+            # back to unicode for comparison
+            map(unicode, new)
 
-        # only print if different
-        if mp3[key] != new:
-            print('"%s"\t->\t"%s"' % (mp3[key], new))
+            # only print if different
+            if mp3[key] != new:
+                print('"%s"\t->\t"%s"' % (mp3[key], new))
 
-        mp3[key] = new
-
-    if not opts.dryrun:
-        mp3.save()
+            mp3[key] = new
         
+        if not opts.dryrun:
+            mp3.save()
+    except ID3NoHeaderError as noh:
+        sys.stderr.write(str(noh) + "\n")
 
 def main():
     """main function for standalone usage"""
@@ -63,7 +66,7 @@ def main():
     parser.add_option("-d", "--dry-run", dest="dryrun", default=False,
             action="store_true", help="Show what would be done, without making any changes.")
     parser.add_option("-w", "--trim-whitespace", dest="trimwhite", default=False,
-            action="store_true", help="Also trim leading/trailing whitespace.")
+            action="store_true", help="Trim leading/trailing whitespace.")
     parser.add_option("-n", "--ascii-non-printable", dest="nonprint", default=False,
             action="store_true", help="Trim non-printable ASCII characters.")
 
