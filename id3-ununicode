@@ -27,6 +27,7 @@
 import sys
 import os
 import fnmatch
+from string import printable
 from optparse import OptionParser
 
 from mutagen.easyid3 import EasyID3 as id3
@@ -39,6 +40,8 @@ def ununicode(mp3path, opts):
         # extra fixup stuff
         if opts.trimwhite:
             new = map(lambda x: x.strip(), new)
+        if opts.nonprint:
+            new = map(lambda s: filter(lambda c: c in printable, s), new)
 
         print('"%s"\t->\t"%s"' % (mp3[key], new))
 
@@ -56,6 +59,8 @@ def main():
             action="store_true", help="Show what would be done, without making any changes.")
     parser.add_option("-w", "--trim-whitespace", dest="trimwhite", default=False,
             action="store_true", help="Also trim leading/trailing whitespace.")
+    parser.add_option("-n", "--ascii-non-printable", dest="nonprint", default=False,
+            action="store_true", help="Trim non-printable ASCII characters.")
 
     (options, args) = parser.parse_args()
 
