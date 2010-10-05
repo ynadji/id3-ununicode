@@ -1,0 +1,8 @@
+== ID3 UNunicode ==
+iTunes kept getting random Unicode characters (\uffff) prepended
+to a bunch of songs for some reason. Ugh.
+
+This fixes it.
+
+== Dependencies ==
+mutagen: http://code.google.com/p/mutagen/ ($ pip install mutagen)
