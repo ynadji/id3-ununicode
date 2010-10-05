@@ -43,7 +43,12 @@ def ununicode(mp3path, opts):
         if opts.nonprint:
             new = map(lambda s: filter(lambda c: c in printable, s), new)
 
-        print('"%s"\t->\t"%s"' % (mp3[key], new))
+        # back to unicode for comparison
+        map(unicode, new)
+
+        # only print if different
+        if mp3[key] != new:
+            print('"%s"\t->\t"%s"' % (mp3[key], new))
 
         mp3[key] = new
 
