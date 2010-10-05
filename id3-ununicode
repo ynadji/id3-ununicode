@@ -31,7 +31,7 @@ from optparse import OptionParser
 
 from mutagen.easyid3 import EasyID3 as id3
 
-def ununicode(mp3path, dryrun):
+def ununicode(mp3path, opts):
     mp3 = id3(mp3path)
     for key in mp3.keys():
         new = map(lambda x: x.encode('ASCII', 'ignore'), mp3[key])
@@ -39,7 +39,7 @@ def ununicode(mp3path, dryrun):
 
         mp3[key] = new
 
-    if not dryrun:
+    if not opts.dryrun:
         mp3.save()
         
 
@@ -58,11 +58,11 @@ def main():
 
     # do stuff
     if os.path.isfile(args[0]):
-        ununicode(args[0], options.dryrun)
+        ununicode(args[0], options)
     else:
         for root, dirs, files in os.walk(args[0]):
             for filename in fnmatch.filter(files, "*.mp3"):
-                ununicode(os.path.join(root, filename), options.dryrun)
+                ununicode(os.path.join(root, filename), options)
 
 if __name__ == '__main__':
     sys.exit(main())
