@@ -26,6 +26,7 @@
 
 import sys
 import os
+import fnmatch
 from optparse import OptionParser
 
 from mutagen.easyid3 import EasyID3 as id3
@@ -59,7 +60,9 @@ def main():
     if os.path.isfile(args[0]):
         ununicode(args[0], options.dryrun)
     else:
-        pass
+        for root, dirs, files in os.walk(args[0]):
+            for filename in fnmatch.filter(files, "*.mp3"):
+                ununicode(os.path.join(root, filename), options.dryrun)
 
 if __name__ == '__main__':
     sys.exit(main())
