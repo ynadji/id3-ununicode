@@ -45,6 +45,9 @@ def ununicode(mp3path, opts):
             if opts.nonprint or opts.all:
                 new = map(lambda s: filter(lambda c: c in printable, s), new)
 
+            # remove empty extra tags
+            new = filter(lambda s: len(s) > 0, new)
+
             # back to unicode for comparison
             map(unicode, new)
 
