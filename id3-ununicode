@@ -58,7 +58,11 @@ def ununicode(mp3path, opts):
             mp3[key] = new
 
         if not opts.dryrun:
-            mp3.save()
+            try:
+                mp3.save()
+            except IndexError as e:
+                sys.stderr.write(mp3path + ": " + str(e) + "\n")
+
     except ID3NoHeaderError as noh:
         sys.stderr.write(str(noh) + "\n")
 
